@@ -111,6 +111,27 @@
   .filter-btn[data-cat="geek"].active { background: var(--geek); border-color: var(--geek); }
   .filter-btn[data-cat="foire"].active { background: var(--foire); border-color: var(--foire); }
 
+  .date-from-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg2); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); padding: 0 14px;
+    transition: border-color 0.2s; white-space: nowrap;
+  }
+  .date-from-box:focus-within { border-color: var(--accent); }
+  .date-from-label { font-size: 0.82rem; color: var(--text-muted); pointer-events: none; }
+  .date-from-box input[type="date"] {
+    background: transparent; border: none; outline: none;
+    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 0.9rem;
+    padding: 11px 0; cursor: pointer; width: 130px;
+  }
+  .date-from-box input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+  .date-from-clear {
+    background: none; border: none; color: var(--text-dim);
+    cursor: pointer; font-size: 0.85rem; padding: 2px 4px;
+    border-radius: 4px; transition: color 0.2s; line-height: 1;
+  }
+  .date-from-clear:hover { color: var(--error); }
+
   .past-toggle-row { margin-top: 0.75rem; }
   .btn-past { border-color: rgba(124,106,247,0.3); color: var(--text-dim); }
   .btn-past.active { background: rgba(124,106,247,0.15); border-color: var(--accent); color: var(--accent2); }
@@ -266,7 +287,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" id="search-input" placeholder="Rechercher par titre, ville…">
     </div>
-    <input type="month" id="month-filter" style="padding:11px 14px; background:var(--bg2); border:1px solid var(--border-strong); border-radius:var(--radius-sm); color:var(--text-muted); font-family:Outfit,sans-serif; font-size:0.85rem; outline:none; cursor:pointer;">
+    <div class="date-from-box">
+      <span class="date-from-label">À partir du</span>
+      <input type="date" id="date-from-filter" title="Afficher les événements à partir de cette date">
+      <button class="date-from-clear" id="date-from-clear" title="Effacer le filtre" style="display:none">✕</button>
+    </div>
     <select class="sort-select" id="sort-select">
       <option value="date_asc">Date ↑ (plus proche)</option>
       <option value="date_desc">Date ↓ (plus lointain)</option>
@@ -378,7 +403,7 @@ function updateStats() {
 
 function getFilteredSorted() {
   const q = document.getElementById('search-input').value.toLowerCase().trim();
-  const monthVal = document.getElementById('month-filter').value;
+  const dateFrom = document.getElementById('date-from-filter').value; // format YYYY-MM-DD
   let arr = [...allEvents];
 
   if (currentCat !== 'all') arr = arr.filter(e => e.category === currentCat);
@@ -390,12 +415,8 @@ function getFilteredSorted() {
     (e.description && e.description.toLowerCase().includes(q))
   );
 
-  if (monthVal) {
-    const [yr, mo] = monthVal.split('-').map(Number);
-    arr = arr.filter(e => {
-      const d = new Date(e.date_start);
-      return d.getFullYear() === yr && (d.getMonth() + 1) === mo;
-    });
+  if (dateFrom) {
+    arr = arr.filter(e => e.date_start >= dateFrom);
   }
 
   arr.sort((a, b) => {
@@ -495,7 +516,15 @@ function closeModal() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 document.getElementById('search-input').addEventListener('input', renderEvents);
-document.getElementById('month-filter').addEventListener('change', renderEvents);
+document.getElementById('date-from-filter').addEventListener('change', function() {
+  document.getElementById('date-from-clear').style.display = this.value ? 'block' : 'none';
+  renderEvents();
+});
+document.getElementById('date-from-clear').addEventListener('click', function() {
+  document.getElementById('date-from-filter').value = '';
+  this.style.display = 'none';
+  renderEvents();
+});
 document.getElementById('sort-select').addEventListener('change', e => { currentSort = e.target.value; renderEvents(); });
 document.querySelectorAll('.filter-btn[data-cat]').forEach(btn => {
   btn.addEventListener('click', () => {
