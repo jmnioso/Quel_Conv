@@ -4,9 +4,17 @@
 -- ============================================================
 
 -- ─────────────────────────────────────────────
--- 1. TABLE : events (événements publiés)
+-- 1. NETTOYAGE (si re-exécution)
 -- ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS events (
+DROP TABLE IF EXISTS proposals CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS admins CASCADE;
+
+
+-- ─────────────────────────────────────────────
+-- 2. TABLE : events (événements publiés)
+-- ─────────────────────────────────────────────
+CREATE TABLE events (
   id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title            TEXT NOT NULL,
   category         TEXT NOT NULL CHECK (category IN ('cosplay','medieval','geek','foire','autre')),
@@ -26,9 +34,9 @@ CREATE TABLE IF NOT EXISTS events (
 
 
 -- ─────────────────────────────────────────────
--- 2. TABLE : proposals (propositions en attente)
+-- 3. TABLE : proposals (propositions en attente)
 -- ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS proposals (
+CREATE TABLE proposals (
   id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title            TEXT NOT NULL,
   category         TEXT NOT NULL,
@@ -50,9 +58,9 @@ CREATE TABLE IF NOT EXISTS proposals (
 
 
 -- ─────────────────────────────────────────────
--- 3. TABLE : admins (administrateurs autorisés)
+-- 4. TABLE : admins (administrateurs autorisés)
 -- ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS admins (
+CREATE TABLE admins (
   id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   email      TEXT UNIQUE NOT NULL,
   name       TEXT,
@@ -60,84 +68,71 @@ CREATE TABLE IF NOT EXISTS admins (
 );
 
 
-
--- RLS : lecture publique pour les événements validés
+-- ─────────────────────────────────────────────
+-- 5. SÉCURITÉ RLS — events
+-- ─────────────────────────────────────────────
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public can read validated events"
+CREATE POLICY "Public read events"
   ON events FOR SELECT
   USING (status = 'validated');
 
-CREATE POLICY "Admins can do everything on events"
+CREATE POLICY "Admins manage events"
   ON events FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM admins WHERE email = auth.email()
-    )
-  );
+  USING (EXISTS (SELECT 1 FROM admins WHERE email = auth.email()));
 
 
-
--- RLS : tout le monde peut soumettre, seuls les admins peuvent lire/gérer
+-- ─────────────────────────────────────────────
+-- 6. SÉCURITÉ RLS — proposals
+-- ─────────────────────────────────────────────
 ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can submit a proposal"
+CREATE POLICY "Anyone can submit"
   ON proposals FOR INSERT
   WITH CHECK (true);
 
-CREATE POLICY "Admins can manage proposals"
+CREATE POLICY "Admins manage proposals"
   ON proposals FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM admins WHERE email = auth.email()
-    )
-  );
+  USING (EXISTS (SELECT 1 FROM admins WHERE email = auth.email()));
 
 
-
--- RLS : un admin peut se lire lui-même + tous si déjà admin
+-- ─────────────────────────────────────────────
+-- 7. SÉCURITÉ RLS — admins
+-- ─────────────────────────────────────────────
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Admins can read admins table"
+CREATE POLICY "Admins read admins"
   ON admins FOR SELECT
-  USING (auth.email() = email OR EXISTS (
-    SELECT 1 FROM admins a2 WHERE a2.email = auth.email()
-  ));
+  USING (EXISTS (SELECT 1 FROM admins a2 WHERE a2.email = auth.email()));
 
-CREATE POLICY "Admins can insert new admins"
+CREATE POLICY "Admins insert admins"
   ON admins FOR INSERT
-  WITH CHECK (
-    EXISTS (SELECT 1 FROM admins WHERE email = auth.email())
-  );
+  WITH CHECK (EXISTS (SELECT 1 FROM admins WHERE email = auth.email()));
 
-CREATE POLICY "Admins can delete admins"
+CREATE POLICY "Admins delete admins"
   ON admins FOR DELETE
-  USING (
-    EXISTS (SELECT 1 FROM admins WHERE email = auth.email())
-  );
+  USING (EXISTS (SELECT 1 FROM admins WHERE email = auth.email()));
 
 
 -- ─────────────────────────────────────────────
--- 4. PREMIER ADMINISTRATEUR
--- ⚠️  Remplacez l'email et le nom ci-dessous !
+-- 8. PREMIER ADMINISTRATEUR
+-- ⚠️  REMPLACEZ l'email et le nom par les vôtres !
 -- ─────────────────────────────────────────────
 INSERT INTO admins (email, name)
-VALUES ('votre@email.fr', 'Votre Nom')
-ON CONFLICT (email) DO NOTHING;
+VALUES ('VOTRE_EMAIL@exemple.fr', 'Votre Prénom Nom');
 
 
 -- ─────────────────────────────────────────────
--- 5. DONNÉES DE TEST (optionnel)
--- Supprimez ce bloc si vous ne voulez pas de données de test
+-- 9. DONNÉES DE TEST (événements à venir)
 -- ─────────────────────────────────────────────
 INSERT INTO events (title, category, description, date_start, date_end, location_name, location_city, price, website, status)
 VALUES
   (
-    'Comic Con Paris 2025',
+    'Comic Con Paris 2026',
     'geek',
     'Le plus grand événement geek et pop culture de France. Rencontrez vos acteurs préférés, assistez à des panels exclusifs et découvrez les nouveautés de l''année.',
-    '2025-10-23',
-    '2025-10-26',
+    '2026-10-22',
+    '2026-10-25',
     'Paris Expo Porte de Versailles',
     'Paris',
     'À partir de 18€',
@@ -145,11 +140,11 @@ VALUES
     'validated'
   ),
   (
-    'Japan Expo Sud',
+    'Japan Expo Sud 2026',
     'cosplay',
     'Le rendez-vous incontournable de la culture japonaise dans le Sud de la France. Manga, anime, cosplay, jeux vidéo et gastronomie japonaise.',
-    '2025-11-14',
-    '2025-11-16',
+    '2026-11-13',
+    '2026-11-15',
     'Parc Chanot',
     'Marseille',
     '12€ / jour',
@@ -157,15 +152,62 @@ VALUES
     'validated'
   ),
   (
+    'Japan Expo Paris 2026',
+    'cosplay',
+    'La référence de la culture japonaise en France : manga, anime, jeux vidéo, cosplay et bien plus encore.',
+    '2026-07-02',
+    '2026-07-05',
+    'Paris-Nord Villepinte',
+    'Paris',
+    'À partir de 14€',
+    'https://www.japan-expo.com',
+    'validated'
+  ),
+  (
     'Marché Médiéval de Provins',
     'medieval',
     'Plongez dans l''ambiance du Moyen-Âge avec combats de chevaliers, artisans d''époque, jongleurs et saltimbanques dans la cité médiévale de Provins.',
-    '2025-09-06',
-    '2025-09-07',
+    '2026-09-05',
+    '2026-09-06',
     'Cité Médiévale',
     'Provins',
     'Gratuit',
     NULL,
     'validated'
-  )
-ON CONFLICT DO NOTHING;
+  ),
+  (
+    'Les Médiévales de Carcassonne',
+    'medieval',
+    'Spectacles équestres, tournois de chevaliers et animations historiques dans la cité de Carcassonne.',
+    '2026-08-14',
+    '2026-08-16',
+    'Cité de Carcassonne',
+    'Carcassonne',
+    '8€ / jour',
+    NULL,
+    'validated'
+  ),
+  (
+    'Paris Games Week 2026',
+    'geek',
+    'Le salon européen du jeu vidéo : centaines de jeux en avant-première, tournois esport et animations.',
+    '2026-10-28',
+    '2026-11-01',
+    'Paris Expo Porte de Versailles',
+    'Paris',
+    'À partir de 14€',
+    'https://www.paris-games-week.com',
+    'validated'
+  ),
+  (
+    'Festival du Cosplay de Lyon',
+    'cosplay',
+    'Concours de cosplay, ateliers de confection de costumes, défilés et expositions dans la capitale des Gaules.',
+    '2026-07-18',
+    '2026-07-19',
+    'Halle Tony Garnier',
+    'Lyon',
+    '10€ / jour',
+    NULL,
+    'validated'
+  );
