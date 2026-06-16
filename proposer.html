@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposer un événement — EventGeek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0b0c14; --bg2: #12131f; --bg3: #1a1b2e;
+    --card: #16172a; --border: rgba(255,255,255,0.07); --border-strong: rgba(255,255,255,0.14);
+    --text: #e8e9f3; --text-muted: #8b8ca8; --text-dim: #555670;
+    --accent: #7c6af7; --accent2: #a78bfa; --accent-glow: rgba(124,106,247,0.15);
+    --success: #4caf86; --error: #e05353;
+    --radius: 12px; --radius-sm: 8px; --radius-lg: 16px;
+  }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(11,12,20,0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 600;
+    color: var(--text); text-decoration: none;
+  }
+  .nav-brand .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), #e879a0);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .nav-back { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 6px 14px; border-radius: var(--radius-sm); transition: all 0.2s; }
+  .nav-back:hover { color: var(--text); background: var(--bg3); }
+
+  main { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+  .page-header { text-align: center; margin-bottom: 3rem; }
+  .page-header .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent-glow); border: 1px solid rgba(124,106,247,0.3);
+    color: var(--accent2); font-size: 0.8rem; font-weight: 500;
+    padding: 4px 14px; border-radius: 100px; margin-bottom: 1rem;
+  }
+  .page-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 600; margin-bottom: 0.8rem; }
+  .page-header p { color: var(--text-muted); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
+
+  .notice {
+    background: rgba(124,106,247,0.1); border: 1px solid rgba(124,106,247,0.25);
+    border-radius: var(--radius-sm); padding: 1rem 1.25rem;
+    font-size: 0.875rem; color: var(--accent2); margin-bottom: 2rem;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+
+  .form-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-dim); margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
+  .form-group label .req { color: var(--accent); }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 11px 14px;
+    background: var(--bg2); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-family: 'Outfit', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border-color 0.2s; width: 100%;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-dim); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group select {
+    cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b8ca8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+  }
+  .form-group select option { background: var(--bg2); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .hint { font-size: 0.78rem; color: var(--text-dim); }
+
+  .submit-btn {
+    width: 100%; padding: 14px;
+    background: var(--accent); border: none;
+    border-radius: var(--radius-sm); color: white;
+    font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em;
+  }
+  .submit-btn:hover:not(:disabled) { background: #6b59e6; transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Feedback masqué par défaut */
+  .feedback {
+    display: none; padding: 1rem 1.25rem;
+    border-radius: var(--radius-sm); margin-top: 1rem;
+    font-size: 0.9rem; align-items: center; gap: 10px;
+  }
+  .feedback.success { background: rgba(76,175,134,0.1); border: 1px solid rgba(76,175,134,0.3); color: var(--success); }
+  .feedback.error   { background: rgba(224,83,83,0.1);  border: 1px solid rgba(224,83,83,0.3);  color: var(--error); }
+
+  @media (max-width: 640px) {
+    main { padding: 2rem 1rem 4rem; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div class="logo-icon">✦</div>
+    EventGeek
+  </a>
+  <a href="index.html" class="nav-back">← Retour au calendrier</a>
+</nav>
+
+<main>
+  <div class="page-header">
+    <div class="badge">📝 Contribution communautaire</div>
+    <h1>Proposer un événement</h1>
+    <p>Vous connaissez un événement qui n'est pas encore répertorié ? Remplissez ce formulaire, un administrateur le vérifiera avant publication.</p>
+  </div>
+
+  <div class="notice">
+    <span>ℹ️</span>
+    <span>Votre proposition sera examinée par notre équipe et publiée si elle est validée.</span>
+  </div>
+
+  <div class="form-card">
+    <div class="section-title">Informations sur l'événement</div>
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Nom de l'événement <span class="req">*</span></label>
+        <input type="text" id="title" placeholder="Ex : Japan Expo, Comic Con Paris…">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Catégorie <span class="req">*</span></label>
+        <select id="category">
+          <option value="">Choisir une catégorie</option>
+          <option value="cosplay">🎭 Cosplay</option>
+          <option value="medieval">⚔️ Médiéval</option>
+          <option value="geek">🎮 Geek / Convention</option>
+          <option value="foire">🎪 Foire / Marché</option>
+          <option value="autre">✦ Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Organisateur</label>
+        <input type="text" id="organizer" placeholder="Nom de l'organisation">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description" placeholder="Décrivez brièvement l'événement : ambiance, activités, invités…"></textarea>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date de début <span class="req">*</span></label>
+        <input type="date" id="date_start">
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <input type="date" id="date_end">
+        <span class="hint">Laisser vide si événement sur 1 jour</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tarif</label>
+        <input type="text" id="price" placeholder="Ex : Gratuit, 15€, À partir de 10€">
+      </div>
+      <div class="form-group">
+        <label>Site officiel</label>
+        <input type="url" id="website" placeholder="https://www.exemple.fr">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="section-title">Lieu de l'événement</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nom du lieu <span class="req">*</span></label>
+        <input type="text" id="location_name" placeholder="Ex : Parc des Expositions, Château de…">
+      </div>
+      <div class="form-group">
+        <label>Ville <span class="req">*</span></label>
+        <input type="text" id="location_city" placeholder="Ex : Paris, Lyon, Bordeaux…">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Adresse complète</label>
+        <input type="text" id="location_address" placeholder="Numéro, rue, code postal, ville">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Lien Google Maps (optionnel)</label>
+        <input type="url" id="location_url" placeholder="https://maps.google.com/…">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="section-title">Vos coordonnées</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Votre nom <span class="req">*</span></label>
+        <input type="text" id="submitter_name" placeholder="Prénom Nom">
+      </div>
+      <div class="form-group">
+        <label>Votre email <span class="hint" style="display:inline">(optionnel)</span></label>
+        <input type="email" id="submitter_email" placeholder="vous@exemple.fr">
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitProposal()">
+    Soumettre la proposition →
+  </button>
+
+  <div class="feedback success" id="feedback-success">
+    ✅ Votre proposition a été soumise avec succès ! Elle sera examinée et publiée si elle est validée.
+  </div>
+  <div class="feedback error" id="feedback-error">
+    ❌ <span id="error-msg">Une erreur est survenue. Veuillez réessayer.</span>
+  </div>
+</main>
+
+<script>
+const supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+
+document.getElementById('date_start').min = new Date().toISOString().split('T')[0];
+document.getElementById('date_end').min   = new Date().toISOString().split('T')[0];
+document.getElementById('date_start').addEventListener('change', function() {
+  document.getElementById('date_end').min = this.value;
+});
+
+async function submitProposal() {
+  const btn = document.getElementById('submit-btn');
+
+  const fields = {
+    title:            document.getElementById('title').value.trim(),
+    category:         document.getElementById('category').value,
+    description:      document.getElementById('description').value.trim() || null,
+    date_start:       document.getElementById('date_start').value,
+    date_end:         document.getElementById('date_end').value || null,
+    location_name:    document.getElementById('location_name').value.trim(),
+    location_city:    document.getElementById('location_city').value.trim(),
+    location_address: document.getElementById('location_address').value.trim() || null,
+    location_url:     document.getElementById('location_url').value.trim() || null,
+    website:          document.getElementById('website').value.trim() || null,
+    organizer:        document.getElementById('organizer').value.trim() || null,
+    price:            document.getElementById('price').value.trim() || null,
+    submitter_name:   document.getElementById('submitter_name').value.trim(),
+    submitter_email:  document.getElementById('submitter_email').value.trim() || null,
+    status:           'pending',
+  };
+
+  // Validation champs obligatoires
+  if (!fields.title || !fields.category || !fields.date_start || !fields.location_name || !fields.location_city || !fields.submitter_name) {
+    showError('Merci de remplir tous les champs obligatoires (*).');
+    return;
+  }
+
+  // Validation email seulement si rempli
+  if (fields.submitter_email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(fields.submitter_email)) {
+      showError("L'adresse email saisie n'est pas valide.");
+      return;
+    }
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+  document.getElementById('feedback-success').style.display = 'none';
+  document.getElementById('feedback-error').style.display   = 'none';
+
+  const { error } = await supabaseClient.from('proposals').insert([fields]);
+
+  btn.disabled = false;
+  btn.textContent = 'Soumettre la proposition →';
+
+  if (error) {
+    showError('Erreur : ' + error.message);
+    return;
+  }
+
+  document.getElementById('feedback-success').style.display = 'flex';
+  document.querySelectorAll('input, select, textarea').forEach(el => el.value = '');
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function showError(msg) {
+  document.getElementById('error-msg').textContent = msg;
+  document.getElementById('feedback-error').style.display = 'flex';
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
