@@ -302,7 +302,13 @@ async function sendMagicLink() {
   btn.disabled = true;
   btn.textContent = 'Envoi…';
 
-  const { error } = await supabaseClient.auth.signInWithOtp({ email });
+
+ const { error } = await supabaseClient.auth.signInWithOtp({
+  email,
+  options: {
+    emailRedirectTo: window.location.origin + '/admin.html'
+  }
+});
 
   btn.disabled = false;
   btn.textContent = 'Envoyer un lien de connexion';
