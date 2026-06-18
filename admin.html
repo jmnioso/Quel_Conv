@@ -141,6 +141,8 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 .card-submitter { font-size: 0.72rem; color: var(--ink-dim); padding-top: 0.75rem; border-top: 1px dashed var(--border-ink); }
 
 .card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; flex-shrink: 0; }
+.btn-edit { padding: 6px 14px; background: rgba(30,15,8,0.06); border: 1px solid var(--border-strong); color: var(--ink-muted); font-family: 'Courier Prime', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
+.btn-edit:hover { background: var(--paper3); color: var(--ink); }
 .btn-validate { padding: 6px 14px; background: rgba(45,106,79,0.1); border: 1px solid rgba(45,106,79,0.4); color: var(--success); font-family: 'Courier Prime', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
 .btn-validate:hover { background: rgba(45,106,79,0.2); }
 .btn-reject { padding: 6px 14px; background: rgba(139,26,26,0.08); border: 1px solid rgba(139,26,26,0.3); color: var(--error); font-family: 'Courier Prime', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
@@ -173,6 +175,74 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 .add-row input:focus { border-color: var(--ink); }
 .btn-add { padding: 9px 20px; background: var(--ink); border: 2px solid var(--ink); color: var(--paper); font-family: 'Special Elite', cursive; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
 .btn-add:hover { background: var(--red); border-color: var(--red); }
+
+/* MODAL ÉDITION */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(15,8,5,0.75); z-index: 1000;
+  align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal-edit {
+  background: var(--paper); border: 2px solid var(--border-strong);
+  box-shadow: 6px 6px 0 rgba(30,15,8,0.3); width: 100%; max-width: 680px;
+  position: relative; margin: auto;
+}
+.modal-edit-header {
+  background: var(--ink); color: var(--paper); padding: 1.1rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 3px solid var(--red);
+}
+.modal-edit-header h3 { font-family: 'Special Elite', cursive; font-size: 1.1rem; letter-spacing: 0.08em; }
+.modal-close {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: var(--paper); width: 30px; height: 30px; cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0;
+}
+.modal-close:hover { background: rgba(255,255,255,0.2); }
+.modal-edit-body { padding: 1.5rem; }
+.modal-section-title {
+  font-family: 'Special Elite', cursive; font-size: 0.65rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--paper); background: var(--ink);
+  padding: 5px 10px; margin-bottom: 1rem; display: inline-block;
+  border-bottom: 2px solid var(--red);
+}
+.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+.modal-row.single { grid-template-columns: 1fr; }
+.modal-group { display: flex; flex-direction: column; gap: 4px; }
+.modal-group label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); }
+.modal-group input, .modal-group select, .modal-group textarea {
+  padding: 8px 10px; background: var(--paper2); border: 1px solid var(--border-strong);
+  color: var(--ink); font-family: 'Courier Prime', monospace; font-size: 0.88rem;
+  outline: none; transition: border-color 0.2s; width: 100%;
+}
+.modal-group input:focus, .modal-group select:focus, .modal-group textarea:focus { border-color: var(--ink); }
+.modal-group input::placeholder, .modal-group textarea::placeholder { color: var(--ink-dim); font-style: italic; }
+.modal-group select { cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239B7B6A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+}
+.modal-group textarea { resize: vertical; min-height: 80px; }
+.modal-divider { border: none; border-top: 1px dashed var(--border-ink); margin: 1.25rem 0; }
+.modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px dashed var(--border-ink); flex-wrap: wrap; }
+.btn-save {
+  padding: 9px 22px; background: var(--ink); border: 2px solid var(--ink); color: var(--paper);
+  font-family: 'Special Elite', cursive; font-size: 0.85rem; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+}
+.btn-save:hover { background: var(--success); border-color: var(--success); }
+.btn-save-validate {
+  padding: 9px 22px; background: var(--success); border: 2px solid var(--success); color: var(--paper);
+  font-family: 'Special Elite', cursive; font-size: 0.85rem; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+}
+.btn-save-validate:hover { opacity: 0.85; }
+.btn-cancel {
+  padding: 9px 18px; background: none; border: 1px solid var(--border-strong); color: var(--ink-dim);
+  font-family: 'Special Elite', cursive; font-size: 0.85rem; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+}
+.btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
 
 /* LOADING / EMPTY */
 .loading { display: flex; justify-content: center; padding: 3rem; }
@@ -281,6 +351,94 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
   </main>
 </div>
 
+<!-- MODAL ÉDITION PROPOSITION -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-edit">
+    <div class="modal-edit-header">
+      <h3>✏️ Modifier la proposition</h3>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-edit-body">
+      <input type="hidden" id="edit-id">
+
+      <div class="modal-section-title">Informations</div>
+      <div class="modal-row single">
+        <div class="modal-group">
+          <label>Titre *</label>
+          <input type="text" id="edit-title">
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label>Catégorie *</label>
+          <select id="edit-category">
+            <option value="cosplay">🎭 Cosplay</option>
+            <option value="medieval">⚔️ Médiéval</option>
+            <option value="geek">🎮 Geek / Convention</option>
+            <option value="foire">🎪 Foire / Marché</option>
+            <option value="autre">✦ Autre</option>
+          </select>
+        </div>
+        <div class="modal-group">
+          <label>Organisateur</label>
+          <input type="text" id="edit-organizer" placeholder="Nom de l'organisation">
+        </div>
+      </div>
+      <div class="modal-row single">
+        <div class="modal-group">
+          <label>Description</label>
+          <textarea id="edit-description" placeholder="Description de l'événement…"></textarea>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label>Date de début *</label>
+          <input type="date" id="edit-date_start">
+        </div>
+        <div class="modal-group">
+          <label>Date de fin</label>
+          <input type="date" id="edit-date_end">
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label>Tarif</label>
+          <input type="text" id="edit-price" placeholder="Ex : Gratuit, 15€…">
+        </div>
+        <div class="modal-group">
+          <label>Site officiel</label>
+          <input type="url" id="edit-website" placeholder="https://…">
+        </div>
+      </div>
+
+      <div class="modal-divider"></div>
+      <div class="modal-section-title">Lieu</div>
+      <div class="modal-row">
+        <div class="modal-group">
+          <label>Nom du lieu *</label>
+          <input type="text" id="edit-location_name">
+        </div>
+        <div class="modal-group">
+          <label>Ville *</label>
+          <input type="text" id="edit-location_city">
+        </div>
+      </div>
+      <div class="modal-row single">
+        <div class="modal-group">
+          <label>Adresse complète</label>
+          <input type="text" id="edit-location_address" placeholder="Numéro, rue, code postal…">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeEditModal()">Annuler</button>
+        <button class="btn-save" onclick="saveProposal()">Enregistrer</button>
+        <button class="btn-save-validate" onclick="saveAndValidate()">Enregistrer & Valider →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -374,11 +532,12 @@ function switchTab(name) {
 
 /* ── PROPOSALS ── */
 async function loadProposals() {
-  const { data, error } = await supabaseClient.from('proposals').select('*').order('created_at', { ascending: false });
-  const pending = (data || []).filter(p => p.status === 'pending');
-  document.getElementById('count-proposals').textContent = pending.length;
-  if (error || !data || data.length === 0) {
-    document.getElementById('proposals-list').innerHTML = '<div class="empty-state">Aucune proposition pour le moment.</div>'; return;
+  const { data, error } = await supabaseClient.from('proposals').select('*').eq('status','pending').order('created_at', { ascending: false });
+  proposalsCache = data || [];
+  document.getElementById('count-proposals').textContent = (data || []).length;
+  if (error) { document.getElementById('proposals-list').innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; return; }
+  if (!data || data.length === 0) {
+    document.getElementById('proposals-list').innerHTML = '<div class="empty-state">Aucune proposition en attente. ✅</div>'; return;
   }
   document.getElementById('proposals-list').innerHTML = data.map(p => `
     <div class="proposal-card">
@@ -387,14 +546,15 @@ async function loadProposals() {
           <div>
             <div class="card-title">${p.title}</div>
             <div class="card-badges">
-              <span class="status-badge status-${p.status}">${{pending:'⏳ En attente', validated:'✅ Validé', rejected:'❌ Refusé'}[p.status]}</span>
+              <span class="status-badge status-pending">⏳ En attente</span>
               <span class="cat-badge cat-${p.category}">${CAT_ICONS[p.category]} ${CAT_LABELS[p.category]}</span>
             </div>
           </div>
           <div class="card-actions">
-            ${p.status !== 'validated' ? `<button class="btn-validate" onclick="validateProposal('${p.id}')">✅ Valider</button>` : ''}
-            ${p.status !== 'rejected'  ? `<button class="btn-reject"   onclick="rejectProposal('${p.id}')">❌ Refuser</button>` : ''}
-            <button class="btn-delete" onclick="deleteProposal('${p.id}')">🗑</button>
+            <button class="btn-edit"     onclick="openEditModal('${p.id}')">✏️ Modifier</button>
+            <button class="btn-validate" onclick="validateProposal('${p.id}')">✅ Valider</button>
+            <button class="btn-reject"   onclick="rejectProposal('${p.id}')">❌ Refuser</button>
+            <button class="btn-delete"   onclick="deleteProposal('${p.id}')">🗑</button>
           </div>
         </div>
         <div class="card-meta">
@@ -411,6 +571,81 @@ async function loadProposals() {
       </div>
     </div>`).join('');
 }
+
+/* ── EDIT MODAL ── */
+let proposalsCache = [];
+
+function openEditModal(id) {
+  const p = proposalsCache.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('edit-id').value              = p.id;
+  document.getElementById('edit-title').value           = p.title || '';
+  document.getElementById('edit-category').value        = p.category || 'autre';
+  document.getElementById('edit-organizer').value       = p.organizer || '';
+  document.getElementById('edit-description').value     = p.description || '';
+  document.getElementById('edit-date_start').value      = p.date_start || '';
+  document.getElementById('edit-date_end').value        = p.date_end || '';
+  document.getElementById('edit-price').value           = p.price || '';
+  document.getElementById('edit-website').value         = p.website || '';
+  document.getElementById('edit-location_name').value   = p.location_name || '';
+  document.getElementById('edit-location_city').value   = p.location_city || '';
+  document.getElementById('edit-location_address').value= p.location_address || '';
+  document.getElementById('edit-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function getEditFields() {
+  return {
+    title:            document.getElementById('edit-title').value.trim(),
+    category:         document.getElementById('edit-category').value,
+    organizer:        document.getElementById('edit-organizer').value.trim() || null,
+    description:      document.getElementById('edit-description').value.trim() || null,
+    date_start:       document.getElementById('edit-date_start').value,
+    date_end:         document.getElementById('edit-date_end').value || null,
+    price:            document.getElementById('edit-price').value.trim() || null,
+    website:          document.getElementById('edit-website').value.trim() || null,
+    location_name:    document.getElementById('edit-location_name').value.trim(),
+    location_city:    document.getElementById('edit-location_city').value.trim(),
+    location_address: document.getElementById('edit-location_address').value.trim() || null,
+  };
+}
+
+async function saveProposal() {
+  const id = document.getElementById('edit-id').value;
+  const fields = getEditFields();
+  if (!fields.title || !fields.date_start || !fields.location_name || !fields.location_city) {
+    showToast('Remplissez les champs obligatoires (*).', 'error'); return;
+  }
+  const { error } = await supabaseClient.from('proposals').update(fields).eq('id', id);
+  if (error) { showToast('Erreur : ' + error.message, 'error'); return; }
+  showToast('Proposition mise à jour !', 'success');
+  closeEditModal(); loadProposals();
+}
+
+async function saveAndValidate() {
+  const id = document.getElementById('edit-id').value;
+  const fields = getEditFields();
+  if (!fields.title || !fields.date_start || !fields.location_name || !fields.location_city) {
+    showToast('Remplissez les champs obligatoires (*).', 'error'); return;
+  }
+  // Mise à jour de la proposition
+  await supabaseClient.from('proposals').update({ ...fields, status: 'validated' }).eq('id', id);
+  // Création de l'événement
+  const { error } = await supabaseClient.from('events').insert([{ ...fields, status: 'validated' }]);
+  if (error) { showToast('Erreur lors de la publication : ' + error.message, 'error'); return; }
+  showToast('Proposition modifiée et publiée !', 'success');
+  closeEditModal(); loadProposals(); loadEvents();
+}
+
+document.getElementById('edit-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('edit-modal')) closeEditModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEditModal(); });
 
 async function validateProposal(id) {
   const { data: prop } = await supabaseClient.from('proposals').select('*').eq('id', id).single();
