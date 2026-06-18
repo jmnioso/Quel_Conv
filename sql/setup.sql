@@ -61,10 +61,11 @@ CREATE TABLE proposals (
 -- 4. TABLE : admins (administrateurs autorisés)
 -- ─────────────────────────────────────────────
 CREATE TABLE admins (
-  id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  email      TEXT UNIQUE NOT NULL,
-  name       TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  id            UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  email         TEXT        UNIQUE NOT NULL,
+  name          TEXT,
+  password_hash TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
 
@@ -100,27 +101,44 @@ CREATE POLICY "Admins manage proposals"
 -- 7. SÉCURITÉ RLS — admins
 -- ─────────────────────────────────────────────
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Admins read admins"
-  ON admins FOR SELECT
-  USING (EXISTS (SELECT 1 FROM admins a2 WHERE a2.email = auth.email()));
-
-CREATE POLICY "Admins insert admins"
-  ON admins FOR INSERT
-  WITH CHECK (EXISTS (SELECT 1 FROM admins WHERE email = auth.email()));
-
-CREATE POLICY "Admins delete admins"
-  ON admins FOR DELETE
-  USING (EXISTS (SELECT 1 FROM admins WHERE email = auth.email()));
+ 
+-- Autoriser la lecture uniquement pour vérifier les credentials
+-- (la page admin fait un SELECT email + password_hash)
+CREATE POLICY "admins_select" ON admins
+  FOR SELECT
+  USING (true);
 
 
--- ─────────────────────────────────────────────
--- 8. PREMIER ADMINISTRATEUR
--- ⚠️  REMPLACEZ l'email et le nom par les vôtres !
--- ─────────────────────────────────────────────
-INSERT INTO admins (email, name)
-VALUES ('VOTRE_EMAIL@exemple.fr', 'Votre Prénom Nom');
-
+-- ─────────────────────────────────────────────────────────────
+-- INSERTION du premier administrateur
+-- Remplacez les valeurs avant d'exécuter
+-- ─────────────────────────────────────────────────────────────
+ 
+INSERT INTO admins (email, name, password_hash)
+VALUES (
+  'jmni.oso@gmail.com',                                          -- ← votre email
+  'Jmni.oso',                                               -- ← votre nom
+  encode(sha256('Mando68'::bytea), 'hex')            -- ← votre mot de passe
+);
+ 
+-- ─────────────────────────────────────────────────────────────
+-- AJOUTER un autre administrateur (même format)
+-- ─────────────────────────────────────────────────────────────
+ 
+-- INSERT INTO admins (email, name, password_hash)
+-- VALUES (
+--   'autre@email.fr',
+--   'Autre Admin',
+--   encode(sha256('sonmotdepasse'::bytea), 'hex')
+-- );
+ 
+-- ─────────────────────────────────────────────────────────────
+-- MODIFIER le mot de passe d'un admin existant
+-- ─────────────────────────────────────────────────────────────
+ 
+-- UPDATE admins
+-- SET password_hash = encode(sha256('nouveaumotdepasse'::bytea), 'hex')
+-- WHERE email = 'votre@email.fr';
 
 -- ─────────────────────────────────────────────
 -- 9. DONNÉES DE TEST (événements à venir)
