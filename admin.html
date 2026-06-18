@@ -47,14 +47,17 @@ nav {
   padding: 5px 12px; cursor: pointer; font-family: 'Special Elite', cursive;
   font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.2s; display: none;
 }
-.btn-logout:hover { color: #F2E8D0; border-color: var(--red); }
+.btn-logout:hover { color: var(--paper); border-color: var(--red); }
 
 /* LOGIN */
-#login-screen { max-width: 440px; margin: 5rem auto; padding: 0 1.5rem; }
+#login-screen {
+  min-height: calc(100vh - 56px);
+  display: flex; align-items: center; justify-content: center; padding: 2rem;
+}
 .login-card {
   background: var(--paper2); border: 1px solid var(--border-strong);
   box-shadow: 4px 4px 0 rgba(30,15,8,0.15), 8px 8px 0 rgba(30,15,8,0.07);
-  position: relative; overflow: hidden;
+  width: 100%; max-width: 420px; position: relative; overflow: hidden;
 }
 .login-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -67,16 +70,16 @@ nav {
 }
 .login-header-eyebrow { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--perf); margin-bottom: 4px; }
 .login-header h2 { font-family: 'Special Elite', cursive; font-size: 1.4rem; letter-spacing: 0.08em; }
-.login-body { padding: 1.5rem; }
-.login-body p { color: var(--ink-muted); font-size: 0.85rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.login-body { padding: 1.75rem 1.5rem; }
 .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
 .form-group label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); }
 .form-group input {
-  padding: 9px 12px; background: var(--paper);
+  padding: 10px 12px; background: var(--paper);
   border: 1px solid var(--border-strong); color: var(--ink);
-  font-family: 'Courier Prime', monospace; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+  font-family: 'Courier Prime', monospace; font-size: 0.92rem; outline: none; transition: border-color 0.2s;
 }
 .form-group input:focus { border-color: var(--ink); }
+.form-group input::placeholder { color: var(--ink-dim); font-style: italic; }
 .btn-primary {
   width: 100%; padding: 11px; background: var(--ink); border: 2px solid var(--ink); color: var(--paper);
   font-family: 'Special Elite', cursive; font-size: 0.9rem; letter-spacing: 0.1em;
@@ -84,20 +87,17 @@ nav {
 }
 .btn-primary:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.login-error { color: var(--error); font-size: 0.8rem; margin-top: 0.75rem; display: none; font-style: italic; }
-.login-info {
-  color: var(--ink-dim); font-size: 0.72rem; margin-top: 1rem;
-  text-align: center; letter-spacing: 0.05em; font-style: italic;
+.login-error {
+  color: var(--error); font-size: 0.8rem; margin-top: 0.75rem;
+  display: none; font-style: italic; padding: 8px 10px;
+  background: rgba(139,26,26,0.06); border-left: 3px solid var(--error);
 }
 
 /* ADMIN SCREEN */
 #admin-screen { display: none; }
 main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
-.page-header-admin { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-strong); }
-.page-title {
-  font-family: 'Special Elite', cursive; font-size: 1.4rem;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.2rem;
-}
+.page-header-admin { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-strong); display: flex; justify-content: space-between; align-items: flex-end; }
+.page-title { font-family: 'Special Elite', cursive; font-size: 1.4rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.2rem; }
 .page-subtitle { color: var(--ink-dim); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* TABS */
@@ -118,21 +118,18 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
-/* CARTES PROPOSITIONS / ÉVÉNEMENTS */
+/* CARDS */
 .proposal-card, .event-card-admin {
   background: var(--paper2); border: 1px solid var(--border-strong);
   box-shadow: 2px 2px 0 rgba(30,15,8,0.1), 4px 4px 0 rgba(30,15,8,0.05);
-  margin-bottom: 1rem; position: relative; overflow: hidden;
-  transition: box-shadow 0.2s;
+  margin-bottom: 1rem; position: relative; overflow: hidden; transition: box-shadow 0.2s;
 }
 .proposal-card::before, .event-card-admin::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   background: repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(30,15,8,0.01) 5px, rgba(30,15,8,0.01) 6px);
   pointer-events: none;
 }
-.proposal-card:hover, .event-card-admin:hover {
-  box-shadow: 3px 3px 0 rgba(30,15,8,0.15), 6px 6px 0 rgba(30,15,8,0.08);
-}
+.proposal-card:hover, .event-card-admin:hover { box-shadow: 3px 3px 0 rgba(30,15,8,0.15), 6px 6px 0 rgba(30,15,8,0.08); }
 .card-inner { padding: 1.25rem; }
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
 .card-title { font-family: 'Special Elite', cursive; font-size: 1.05rem; color: var(--ink); margin-bottom: 6px; }
@@ -141,85 +138,40 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 .card-meta a { color: var(--red); text-decoration: none; }
 .card-meta a:hover { text-decoration: underline; }
 .card-desc { font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 0.75rem; line-height: 1.6; font-style: italic; }
-.card-submitter {
-  font-size: 0.72rem; color: var(--ink-dim); padding-top: 0.75rem;
-  border-top: 1px dashed var(--border-ink); letter-spacing: 0.03em;
-}
+.card-submitter { font-size: 0.72rem; color: var(--ink-dim); padding-top: 0.75rem; border-top: 1px dashed var(--border-ink); }
 
 .card-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; flex-shrink: 0; }
-.btn-validate {
-  padding: 6px 14px; background: rgba(45,106,79,0.1); border: 1px solid rgba(45,106,79,0.4);
-  color: var(--success); font-family: 'Courier Prime', monospace; font-size: 0.78rem;
-  text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s;
-}
+.btn-validate { padding: 6px 14px; background: rgba(45,106,79,0.1); border: 1px solid rgba(45,106,79,0.4); color: var(--success); font-family: 'Courier Prime', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
 .btn-validate:hover { background: rgba(45,106,79,0.2); }
-.btn-reject {
-  padding: 6px 14px; background: rgba(139,26,26,0.08); border: 1px solid rgba(139,26,26,0.3);
-  color: var(--error); font-family: 'Courier Prime', monospace; font-size: 0.78rem;
-  text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s;
-}
+.btn-reject { padding: 6px 14px; background: rgba(139,26,26,0.08); border: 1px solid rgba(139,26,26,0.3); color: var(--error); font-family: 'Courier Prime', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
 .btn-reject:hover { background: rgba(139,26,26,0.18); }
-.btn-delete {
-  padding: 6px 14px; background: none; border: 1px solid var(--border-ink);
-  color: var(--ink-dim); font-family: 'Courier Prime', monospace; font-size: 0.78rem;
-  text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s;
-}
+.btn-delete { padding: 6px 14px; background: none; border: 1px solid var(--border-ink); color: var(--ink-dim); font-family: 'Courier Prime', monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; }
 .btn-delete:hover { color: var(--error); border-color: rgba(139,26,26,0.3); }
 
 /* BADGES */
-.status-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px;
-  border: 1px solid currentColor; font-family: 'Courier Prime', monospace;
-}
+.status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border: 1px solid currentColor; font-family: 'Courier Prime', monospace; }
 .status-pending   { color: var(--warning); }
 .status-validated { color: var(--success); }
 .status-rejected  { color: var(--error); }
-.cat-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 2px 8px; border: 1px solid currentColor; font-family: 'Courier Prime', monospace;
-}
-.cat-cosplay { color: #8B1A1A; }
-.cat-medieval { color: #6B4C0A; }
-.cat-geek { color: #1A3A5C; }
-.cat-foire { color: #1A4C2C; }
-.cat-autre { color: var(--ink-muted); }
+.cat-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border: 1px solid currentColor; font-family: 'Courier Prime', monospace; }
+.cat-cosplay { color: #8B1A1A; } .cat-medieval { color: #6B4C0A; } .cat-geek { color: #1A3A5C; } .cat-foire { color: #1A4C2C; } .cat-autre { color: var(--ink-muted); }
 
 /* ADMINS TAB */
 .admin-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
-.admin-row {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--paper2); border: 1px solid var(--border-strong);
-  padding: 1rem 1.25rem;
-}
-.admin-info .admin-email { color: var(--ink); font-size: 0.9rem; }
-.admin-info .admin-name { color: var(--ink-dim); font-size: 0.78rem; margin-top: 2px; font-style: italic; }
+.admin-row { display: flex; align-items: center; justify-content: space-between; background: var(--paper2); border: 1px solid var(--border-strong); padding: 1rem 1.25rem; }
+.admin-email { color: var(--ink); font-size: 0.9rem; }
+.admin-name { color: var(--ink-dim); font-size: 0.78rem; margin-top: 2px; font-style: italic; }
 .admin-since { font-size: 0.7rem; letter-spacing: 0.08em; color: var(--ink-dim); text-transform: uppercase; }
+.admin-row-actions { display: flex; align-items: center; gap: 1rem; }
 
-.add-admin-form {
-  background: var(--paper2); border: 1px solid var(--border-strong);
-  box-shadow: 2px 2px 0 rgba(30,15,8,0.1);
-}
-.add-admin-header {
-  background: var(--ink); color: var(--paper); padding: 0.7rem 1.25rem;
-  font-family: 'Special Elite', cursive; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
-  border-bottom: 2px solid var(--red);
-}
+.add-admin-form { background: var(--paper2); border: 1px solid var(--border-strong); box-shadow: 2px 2px 0 rgba(30,15,8,0.1); }
+.add-admin-header { background: var(--ink); color: var(--paper); padding: 0.7rem 1.25rem; font-family: 'Special Elite', cursive; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; border-bottom: 2px solid var(--red); }
 .add-admin-body { padding: 1.25rem; }
 .add-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-.add-row input {
-  flex: 1; min-width: 200px; padding: 9px 12px; background: var(--paper);
-  border: 1px solid var(--border-strong); color: var(--ink);
-  font-family: 'Courier Prime', monospace; font-size: 0.88rem; outline: none; transition: border-color 0.2s;
-}
+.add-row input { flex: 1; min-width: 180px; padding: 9px 12px; background: var(--paper); border: 1px solid var(--border-strong); color: var(--ink); font-family: 'Courier Prime', monospace; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
 .add-row input::placeholder { color: var(--ink-dim); font-style: italic; }
 .add-row input:focus { border-color: var(--ink); }
-.btn-add {
-  padding: 9px 20px; background: var(--ink); border: 2px solid var(--ink); color: var(--paper);
-  font-family: 'Special Elite', cursive; font-size: 0.82rem; letter-spacing: 0.08em;
-  text-transform: uppercase; cursor: pointer; transition: all 0.2s;
-}
+.btn-add { padding: 9px 20px; background: var(--ink); border: 2px solid var(--ink); color: var(--paper); font-family: 'Special Elite', cursive; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
 .btn-add:hover { background: var(--red); border-color: var(--red); }
 
 /* LOADING / EMPTY */
@@ -231,13 +183,11 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 /* TOAST */
 .toast {
   position: fixed; bottom: 2rem; right: 2rem;
-  padding: 0.75rem 1.25rem; font-size: 0.82rem;
-  letter-spacing: 0.05em; z-index: 9999; display: none;
-  border-left: 4px solid; font-family: 'Courier Prime', monospace;
-  background: var(--paper2); border-top: 1px solid var(--border-strong);
-  border-right: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong);
-  box-shadow: 3px 3px 0 rgba(30,15,8,0.15);
-  animation: slideIn 0.2s ease;
+  padding: 0.75rem 1.25rem; font-size: 0.82rem; letter-spacing: 0.05em;
+  z-index: 9999; display: none; border-left: 4px solid;
+  font-family: 'Courier Prime', monospace; background: var(--paper2);
+  border-top: 1px solid var(--border-strong); border-right: 1px solid var(--border-strong); border-bottom: 1px solid var(--border-strong);
+  box-shadow: 3px 3px 0 rgba(30,15,8,0.15); animation: slideIn 0.2s ease;
 }
 .toast.success { border-left-color: var(--success); color: var(--success); }
 .toast.error   { border-left-color: var(--error);   color: var(--error); }
@@ -247,6 +197,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
   main { padding: 1rem; }
   .card-top { flex-direction: column; }
   .card-actions { width: 100%; }
+  .add-row { flex-direction: column; }
 }
 </style>
 </head>
@@ -258,7 +209,7 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
     EventGeek
   </a>
   <div class="nav-right">
-    <span class="admin-badge" id="admin-name-badge">Admin</span>
+    <span class="admin-badge" id="admin-name-badge"></span>
     <button class="btn-logout" id="btn-logout" onclick="logout()">Déconnexion</button>
   </div>
 </nav>
@@ -271,14 +222,16 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
       <h2>Espace Admin</h2>
     </div>
     <div class="login-body">
-      <p>Connectez-vous avec votre email pour accéder à l'interface d'administration.</p>
       <div class="form-group">
-        <label>Email administrateur</label>
-        <input type="email" id="login-email" placeholder="votre@email.fr" onkeydown="if(event.key==='Enter') sendMagicLink()">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="votre@email.fr" onkeydown="if(event.key==='Enter') login()">
       </div>
-      <button class="btn-primary" id="login-btn" onclick="sendMagicLink()">Envoyer un lien de connexion →</button>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()">
+      </div>
+      <button class="btn-primary" id="login-btn" onclick="login()">Se connecter →</button>
       <div class="login-error" id="login-error"></div>
-      <p class="login-info">Un lien magique vous sera envoyé par email.<br>Pas de mot de passe à retenir.</p>
     </div>
   </div>
 </div>
@@ -287,8 +240,10 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
 <div id="admin-screen">
   <main>
     <div class="page-header-admin">
-      <div class="page-title">Interface d'administration</div>
-      <div class="page-subtitle">Gérez les propositions et les événements publiés</div>
+      <div>
+        <div class="page-title">Interface d'administration</div>
+        <div class="page-subtitle">Gérez les propositions et les événements publiés</div>
+      </div>
     </div>
 
     <div class="tabs">
@@ -303,25 +258,21 @@ main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
       </button>
     </div>
 
-    <!-- TAB PROPOSALS -->
     <div class="tab-panel active" id="tab-proposals">
       <div id="proposals-list"><div class="loading"><div class="spinner"></div></div></div>
     </div>
-
-    <!-- TAB EVENTS -->
     <div class="tab-panel" id="tab-events">
       <div id="events-list"><div class="loading"><div class="spinner"></div></div></div>
     </div>
-
-    <!-- TAB ADMINS -->
     <div class="tab-panel" id="tab-admins">
       <div class="admin-list" id="admins-list"><div class="loading"><div class="spinner"></div></div></div>
       <div class="add-admin-form">
         <div class="add-admin-header">✦ Ajouter un administrateur</div>
         <div class="add-admin-body">
           <div class="add-row">
-            <input type="text" id="new-admin-name" placeholder="Nom (optionnel)">
-            <input type="email" id="new-admin-email" placeholder="email@exemple.fr">
+            <input type="text"     id="new-admin-name"     placeholder="Nom (optionnel)">
+            <input type="email"    id="new-admin-email"    placeholder="email@exemple.fr">
+            <input type="password" id="new-admin-password" placeholder="Mot de passe">
             <button class="btn-add" onclick="addAdmin()">Ajouter →</button>
           </div>
         </div>
@@ -337,47 +288,82 @@ const supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.
 const CAT_LABELS = { cosplay:'Cosplay', medieval:'Médiéval', geek:'Geek', foire:'Foire', autre:'Autre' };
 const CAT_ICONS  = { cosplay:'🎭', medieval:'⚔️', geek:'🎮', foire:'🎪', autre:'✦' };
 
-/* AUTH */
-async function sendMagicLink() {
-  const email = document.getElementById('login-email').value.trim();
-  const btn   = document.getElementById('login-btn');
-  const err   = document.getElementById('login-error');
-  err.style.display = 'none';
-  if (!email) { showLoginError('Veuillez saisir votre email.'); return; }
-  btn.disabled = true; btn.textContent = 'Envoi…';
-  const { error } = await supabaseClient.auth.signInWithOtp({ email });
-  btn.disabled = false; btn.textContent = 'Envoyer un lien de connexion →';
-  if (error) { showLoginError('Erreur : ' + error.message); return; }
-  document.querySelector('.login-body p').textContent = `✅ Lien envoyé à ${email} ! Vérifiez votre boîte mail.`;
-  document.getElementById('login-email').disabled = true;
-  btn.disabled = true;
+let currentAdmin = null;
+
+/* ── HASH SHA-256 ── */
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-function showLoginError(msg) {
-  const err = document.getElementById('login-error');
-  err.textContent = msg; err.style.display = 'block';
+
+/* ── SESSION locale ── */
+function saveSession(admin) {
+  sessionStorage.setItem('eventgeek_admin', JSON.stringify(admin));
 }
-async function checkSession() {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) return;
-  await loadAdmin(session.user);
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem('eventgeek_admin')); } catch { return null; }
 }
-async function loadAdmin(user) {
-  const { data: adminRow, error } = await supabaseClient.from('admins').select('*').eq('email', user.email).single();
-  if (error || !adminRow) {
-    await supabaseClient.auth.signOut();
-    showLoginError("Accès refusé : votre email n'est pas autorisé."); return;
+function clearSession() { sessionStorage.removeItem('eventgeek_admin'); }
+
+/* ── LOGIN ── */
+async function login() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn      = document.getElementById('login-btn');
+  const errEl    = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  if (!email || !password) { showLoginError('Veuillez remplir tous les champs.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Vérification…';
+
+  const hash = await sha256(password);
+
+  const { data, error } = await supabaseClient
+    .from('admins')
+    .select('*')
+    .eq('email', email)
+    .eq('password_hash', hash)
+    .single();
+
+  btn.disabled = false; btn.textContent = 'Se connecter →';
+
+  if (error || !data) {
+    showLoginError('Email ou mot de passe incorrect.');
+    document.getElementById('login-password').value = '';
+    return;
   }
+
+  currentAdmin = data;
+  saveSession(data);
+  showAdminScreen(data);
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+function showAdminScreen(admin) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('admin-screen').style.display = 'block';
+  document.getElementById('admin-name-badge').textContent = admin.name || admin.email;
   document.getElementById('admin-name-badge').style.display = 'inline-flex';
-  document.getElementById('admin-name-badge').textContent = adminRow.name || user.email;
   document.getElementById('btn-logout').style.display = 'inline-flex';
   loadProposals(); loadEvents(); loadAdmins();
 }
-async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
-supabaseClient.auth.onAuthStateChange(async (event, session) => { if (session) await loadAdmin(session.user); });
 
-/* TABS */
+function logout() {
+  clearSession(); currentAdmin = null;
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-name-badge').style.display = 'none';
+  document.getElementById('btn-logout').style.display = 'none';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+}
+
+/* ── TABS ── */
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', ['proposals','events','admins'][i] === name);
@@ -386,16 +372,16 @@ function switchTab(name) {
   document.getElementById('tab-' + name).classList.add('active');
 }
 
-/* PROPOSALS */
+/* ── PROPOSALS ── */
 async function loadProposals() {
   const { data, error } = await supabaseClient.from('proposals').select('*').order('created_at', { ascending: false });
   const pending = (data || []).filter(p => p.status === 'pending');
   document.getElementById('count-proposals').textContent = pending.length;
-  if (error) { document.getElementById('proposals-list').innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; return; }
-  if (!data || data.length === 0) { document.getElementById('proposals-list').innerHTML = '<div class="empty-state">Aucune proposition pour le moment.</div>'; return; }
-
+  if (error || !data || data.length === 0) {
+    document.getElementById('proposals-list').innerHTML = '<div class="empty-state">Aucune proposition pour le moment.</div>'; return;
+  }
   document.getElementById('proposals-list').innerHTML = data.map(p => `
-    <div class="proposal-card" id="prop-${p.id}">
+    <div class="proposal-card">
       <div class="card-inner">
         <div class="card-top">
           <div>
@@ -412,7 +398,7 @@ async function loadProposals() {
           </div>
         </div>
         <div class="card-meta">
-          <span>📅 ${p.date_start}${p.date_end ? ' → ' + p.date_end : ''}</span>
+          <span>📅 ${p.date_start}${p.date_end ? ' → '+p.date_end : ''}</span>
           <span>📍 ${p.location_name}, ${p.location_city}</span>
           ${p.price   ? `<span>💶 ${p.price}</span>` : ''}
           ${p.website ? `<span><a href="${p.website}" target="_blank">Site ↗</a></span>` : ''}
@@ -423,21 +409,19 @@ async function loadProposals() {
           &bull; ${new Date(p.created_at).toLocaleDateString('fr-FR')}
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 async function validateProposal(id) {
   const { data: prop } = await supabaseClient.from('proposals').select('*').eq('id', id).single();
   if (!prop) return;
-  const eventData = {
+  const { error } = await supabaseClient.from('events').insert([{
     title: prop.title, category: prop.category, description: prop.description,
     date_start: prop.date_start, date_end: prop.date_end,
     location_name: prop.location_name, location_city: prop.location_city,
     location_address: prop.location_address, website: prop.website,
     organizer: prop.organizer, price: prop.price, status: 'validated',
-  };
-  const { error } = await supabaseClient.from('events').insert([eventData]);
+  }]);
   if (error) { showToast('Erreur : ' + error.message, 'error'); return; }
   await supabaseClient.from('proposals').update({ status: 'validated' }).eq('id', id);
   showToast('Événement validé et publié !', 'success');
@@ -453,13 +437,13 @@ async function deleteProposal(id) {
   showToast('Proposition supprimée.', 'success'); loadProposals();
 }
 
-/* EVENTS */
+/* ── EVENTS ── */
 async function loadEvents() {
   const { data, error } = await supabaseClient.from('events').select('*').order('date_start', { ascending: false });
   document.getElementById('count-events').textContent = (data || []).length;
-  if (error) { document.getElementById('events-list').innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; return; }
-  if (!data || data.length === 0) { document.getElementById('events-list').innerHTML = '<div class="empty-state">Aucun événement publié.</div>'; return; }
-
+  if (error || !data || data.length === 0) {
+    document.getElementById('events-list').innerHTML = '<div class="empty-state">Aucun événement publié.</div>'; return;
+  }
   document.getElementById('events-list').innerHTML = data.map(e => `
     <div class="event-card-admin">
       <div class="card-inner">
@@ -475,15 +459,14 @@ async function loadEvents() {
           </div>
         </div>
         <div class="card-meta">
-          <span>📅 ${e.date_start}${e.date_end ? ' → ' + e.date_end : ''}</span>
+          <span>📅 ${e.date_start}${e.date_end ? ' → '+e.date_end : ''}</span>
           <span>📍 ${e.location_name}, ${e.location_city}</span>
           ${e.price   ? `<span>💶 ${e.price}</span>` : ''}
           ${e.website ? `<span><a href="${e.website}" target="_blank">Site ↗</a></span>` : ''}
         </div>
         ${e.description ? `<div class="card-desc">${e.description}</div>` : ''}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 async function deleteEvent(id) {
   if (!confirm('Supprimer définitivement cet événement ?')) return;
@@ -491,39 +474,53 @@ async function deleteEvent(id) {
   showToast('Événement supprimé.', 'success'); loadEvents();
 }
 
-/* ADMINS */
+/* ── ADMINS ── */
 async function loadAdmins() {
-  const { data, error } = await supabaseClient.from('admins').select('*').order('created_at');
+  const { data, error } = await supabaseClient.from('admins').select('id, email, name, created_at').order('created_at');
   if (error || !data) { document.getElementById('admins-list').innerHTML = '<div class="empty-state">Erreur de chargement.</div>'; return; }
   document.getElementById('admins-list').innerHTML = data.map(a => `
     <div class="admin-row">
-      <div class="admin-info">
+      <div>
         <div class="admin-email">${a.email}</div>
         ${a.name ? `<div class="admin-name">${a.name}</div>` : ''}
       </div>
-      <span class="admin-since">Depuis le ${new Date(a.created_at).toLocaleDateString('fr-FR')}</span>
-    </div>
-  `).join('');
+      <div class="admin-row-actions">
+        <span class="admin-since">Depuis le ${new Date(a.created_at).toLocaleDateString('fr-FR')}</span>
+        ${a.id !== currentAdmin?.id ? `<button class="btn-delete" onclick="deleteAdmin('${a.id}', '${a.email}')">🗑</button>` : '<span style="font-size:0.7rem;color:var(--ink-dim);font-style:italic;">Vous</span>'}
+      </div>
+    </div>`).join('');
 }
+
 async function addAdmin() {
-  const email = document.getElementById('new-admin-email').value.trim();
-  const name  = document.getElementById('new-admin-name').value.trim() || null;
-  if (!email) { showToast('Email requis.', 'error'); return; }
-  const { error } = await supabaseClient.from('admins').insert([{ email, name }]);
+  const name     = document.getElementById('new-admin-name').value.trim() || null;
+  const email    = document.getElementById('new-admin-email').value.trim();
+  const password = document.getElementById('new-admin-password').value;
+  if (!email || !password) { showToast('Email et mot de passe requis.', 'error'); return; }
+  const password_hash = await sha256(password);
+  const { error } = await supabaseClient.from('admins').insert([{ email, name, password_hash }]);
   if (error) { showToast('Erreur : ' + error.message, 'error'); return; }
+  document.getElementById('new-admin-name').value = '';
   document.getElementById('new-admin-email').value = '';
-  document.getElementById('new-admin-name').value  = '';
+  document.getElementById('new-admin-password').value = '';
   showToast('Administrateur ajouté !', 'success'); loadAdmins();
 }
 
-/* TOAST */
+async function deleteAdmin(id, email) {
+  if (!confirm(`Supprimer l'administrateur ${email} ?`)) return;
+  await supabaseClient.from('admins').delete().eq('id', id);
+  showToast('Administrateur supprimé.', 'success'); loadAdmins();
+}
+
+/* ── TOAST ── */
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = `toast ${type}`; t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-checkSession();
+/* ── AUTO-LOGIN si session active ── */
+const saved = getSession();
+if (saved) { currentAdmin = saved; showAdminScreen(saved); }
 </script>
 </body>
 </html>
